@@ -17,7 +17,7 @@ public class Estacionamiento {
             } else {
                 if (coche.esVip()) {
                     desalojarCocheNormal(coche);
-                    System.out.println(coche + " (VIP) ha entrado desalojando a un coche normal.");
+                    System.out.println(coche + "ha entrado desalojando a un coche normal.");
                     return true;
 
                 } else {
@@ -44,6 +44,7 @@ public class Estacionamiento {
                 coches.remove(coche);
                 System.out.println(coche + " fue desalojado por " + cocheVip);
                 coches.add(cocheVip);
+                break;
 
             }
         }
