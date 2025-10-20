@@ -17,7 +17,7 @@ public class Coche extends Thread {
     @Override
     public void run() {
         // Intentar aparcar
-        if (!aparcamiento.entrar(nombre)) {
+        if (!aparcamiento.entrar(this)) {
             System.out.println( nombre + " se marcha, no pudo entrar.");
             return;
         }
@@ -33,7 +33,7 @@ public class Coche extends Thread {
         }
 
         // Salir del aparcamiento
-        aparcamiento.salirCoche(nombre);
+        aparcamiento.salir(this);
     }
     @Override
     public String toString(){
