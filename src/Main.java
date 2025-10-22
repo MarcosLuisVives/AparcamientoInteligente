@@ -10,6 +10,19 @@ public class Main {
             coche.start();
             coches.add(coche);
         }
+        Thread hilo = new Thread(() -> {
+            // Código en segundo plano
+            System.out.println("======ESTADO ESTACIONAMIENTO=====");
+            while(true){
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    System.out.println(e.getMessage());
+                }
+                estacionamiento.mostrarEstadisticas();
+            }
+        });
+        hilo.start();
         for (Coche c:coches){
             try {
                 c.join();
@@ -17,6 +30,6 @@ public class Main {
                 System.out.println(e.getMessage());
             }
         }
-       estacionamiento.mostrarEstadisticas();
+       estacionamiento.mostrarEstadisticasFinales();
     }
 }

@@ -14,7 +14,7 @@ public class Estacionamiento {
         try {
             if (semaforo.tryAcquire(5, TimeUnit.SECONDS)) {
                 coches.add(coche);
-                System.out.println(coche + " ha entrado. Plazas libres: " + semaforo.availablePermits());
+                System.out.println(coche + " ha entrado ");
                 cochesAparcaron.incrementAndGet();
                 return true;
             } else {
@@ -38,7 +38,7 @@ public class Estacionamiento {
     public synchronized void salir(Coche coche) {
         if (coches.remove(coche)) {
             semaforo.release();
-            System.out.println(coche + " ha salido. Plazas libres: " + semaforo.availablePermits());
+            System.out.println(coche + " ha salido");
         }
     }
 
@@ -55,6 +55,9 @@ public class Estacionamiento {
 
     }
     public void mostrarEstadisticas(){
+        System.out.println("Plazas libres: "+semaforo.availablePermits());
+    }
+    public void mostrarEstadisticasFinales(){
         System.out.println("Coches que lograron entrar: " + cochesAparcaron.get());
         System.out.println("Coches que no lograron entrar: " + cochesFuera.get());
     }
