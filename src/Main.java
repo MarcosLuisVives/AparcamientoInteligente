@@ -5,17 +5,18 @@ public class Main {
         Estacionamiento estacionamiento = new Estacionamiento();
         ArrayList<Coche> coches = new ArrayList<>();
 
+        // Crear 15 coches, 1 de cada 3 es VIP
         for (int i = 0; i < 15; i++) {
             Coche coche = new Coche("Coche " + i, estacionamiento, i % 3 == 0);
             coche.start();
             coches.add(coche);
         }
 
+        // Hilo de estadísticas
         Thread hilo = new Thread(() -> {
-
             while (estacionamiento.isActivo()) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(1000); // cada 2 segundos
                     estacionamiento.mostrarEstadisticas();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -25,21 +26,21 @@ public class Main {
         });
         hilo.start();
 
-        // Esperamos a que terminen todos los coches
+        // Esperar a que terminen todos los coches
         for (Coche c : coches) {
             try {
                 c.join();
             } catch (InterruptedException e) {
-                System.out.println(e.getMessage());
+                Thread.currentThread().interrupt();
             }
         }
 
-        // Apagamos el hilo de estadísticas
+        // Apagar hilo de estadísticas
         estacionamiento.detener();
         try {
             hilo.join();
         } catch (InterruptedException e) {
-            System.out.println(e.getMessage());
+            Thread.currentThread().interrupt();
         }
 
         estacionamiento.mostrarEstadisticasFinales();
