@@ -22,7 +22,7 @@ public class Coche extends Thread {
             System.out.println(nombre + " se marcha, no pudo entrar.");
             return;
         }
-        int tiempo = random.nextInt(5) + 10;
+        int tiempo = random.nextInt(5) + 2;
         System.out.println(nombre + " está estacionado (" + tiempo + "s).");
         try {
             Thread.sleep(tiempo * 1000L);

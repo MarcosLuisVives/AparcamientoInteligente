@@ -9,6 +9,9 @@ public class Estacionamiento {
     private final ArrayList<Coche> coches = new ArrayList<>();
     private AtomicInteger cochesAparcaron=new AtomicInteger(0);
     private AtomicInteger cochesFuera=new AtomicInteger(0);
+    private AtomicInteger cochesDesalojados = new AtomicInteger(0);
+
+    private volatile boolean activo = true;
 
     public synchronized boolean entrar(Coche coche) {
         try {
@@ -20,10 +23,12 @@ public class Estacionamiento {
             } else {
                 if (coche.esVip()) {
                     desalojarCocheNormal(coche);
-                    System.out.println(coche + "ha entrado desalojando a un coche normal.");
+                    cochesDesalojados.incrementAndGet();
+                    semaforo.tryAcquire(); // el VIP ocupa la plaza liberada
+                    System.out.println(coche + " ha entrado desalojando a un coche normal.");
+                    cochesAparcaron.incrementAndGet();
                     return true;
-
-                } else {
+                }else {
                     System.out.println(coche + " no pudo entrar (parking lleno).");
                     cochesFuera.incrementAndGet();
                     return false;
@@ -48,17 +53,30 @@ public class Estacionamiento {
                 coches.remove(coche);
                 System.out.println(coche + " fue desalojado por " + cocheVip);
                 coches.add(cocheVip);
+                semaforo.release(); // liberar plaza del coche desalojado
                 break;
-
             }
         }
+    }
+    public void mostrarEstadisticas() {
+        System.out.println("======ESTADO ESTACIONAMIENTO=====");
+        System.out.println("Plazas libres: " + semaforo.availablePermits());
+        System.out.println("===========");
+    }
 
-    }
-    public void mostrarEstadisticas(){
-        System.out.println("Plazas libres: "+semaforo.availablePermits());
-    }
-    public void mostrarEstadisticasFinales(){
+
+    public void mostrarEstadisticasFinales() {
         System.out.println("Coches que lograron entrar: " + cochesAparcaron.get());
         System.out.println("Coches que no lograron entrar: " + cochesFuera.get());
+        System.out.println("Coches desalojados: " + cochesDesalojados.get());
     }
+    // Métodos para controlar el flag
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void detener() {
+        activo = false;
+    }
+
 }
