@@ -4,15 +4,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Estacionamiento {
-    private final AtomicInteger capacidadMaxima = new AtomicInteger(5);
+    private final int capacidadMaxima = 5;
     private final Semaphore semaforo = new Semaphore(5);
     private final ArrayList<Coche> coches = new ArrayList<>();
+    private AtomicInteger cochesAparcaron=new AtomicInteger(0);
+    private AtomicInteger cochesFuera=new AtomicInteger(0);
 
     public synchronized boolean entrar(Coche coche) {
         try {
             if (semaforo.tryAcquire(5, TimeUnit.SECONDS)) {
                 coches.add(coche);
                 System.out.println(coche + " ha entrado. Plazas libres: " + semaforo.availablePermits());
+                cochesAparcaron.incrementAndGet();
                 return true;
             } else {
                 if (coche.esVip()) {
@@ -22,6 +25,7 @@ public class Estacionamiento {
 
                 } else {
                     System.out.println(coche + " no pudo entrar (parking lleno).");
+                    cochesFuera.incrementAndGet();
                     return false;
                 }
             }
@@ -49,5 +53,9 @@ public class Estacionamiento {
             }
         }
 
+    }
+    public void mostrarEstadisticas(){
+        System.out.println("Coches que lograron entrar: " + cochesAparcaron.get());
+        System.out.println("Coches que no lograron entrar: " + cochesFuera.get());
     }
 }
