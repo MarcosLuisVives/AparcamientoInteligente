@@ -19,7 +19,7 @@ public class Estacionamiento {
         try {
             if (semaforo.tryAcquire(5, TimeUnit.SECONDS)) { // normales esperan máx 3s
                 coches.add(coche);
-                System.out.println(LocalTime.now() + " - " + coche + " ha entrado");
+                System.out.println( coche + " ha entrado");
                 cochesAparcaron.incrementAndGet();
                 return true;
             } else {
@@ -27,11 +27,11 @@ public class Estacionamiento {
                     desalojarCocheNormal(coche);
                     semaforo.acquireUninterruptibly(); // ocupa la plaza liberada
                     coches.add(coche);
-                    System.out.println(LocalTime.now() + " - " + coche + " ha entrado desalojando a un coche normal.");
+                    System.out.println(coche + " ha entrado desalojando a un coche normal.");
                     cochesAparcaron.incrementAndGet();
                     return true;
                 } else {
-                    System.out.println(LocalTime.now() + " - " + coche + " no pudo entrar (parking lleno).");
+                    System.out.println(coche + " no pudo entrar (parking lleno).");
                     cochesFuera.incrementAndGet();
                     return false;
                 }
@@ -45,7 +45,7 @@ public class Estacionamiento {
     public synchronized void salir(Coche coche) {
         if (coches.remove(coche)) {
             semaforo.release();
-            System.out.println(LocalTime.now() + " - " + coche + " ha salido");
+            System.out.println(coche + " ha salido");
         }
     }
 
@@ -54,7 +54,7 @@ public class Estacionamiento {
             if (!coche.esVip()) {
                 coches.remove(coche);
                 cochesDesalojados.incrementAndGet();
-                System.out.println(LocalTime.now() + " - " + coche + " fue desalojado por " + cocheVip);
+                System.out.println(coche + " fue desalojado por " + cocheVip);
                 semaforo.release(); // liberar plaza del desalojado
                 break;
             }

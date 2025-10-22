@@ -16,7 +16,7 @@ public class Main {
         Thread hilo = new Thread(() -> {
             while (estacionamiento.isActivo()) {
                 try {
-                    Thread.sleep(1000); // cada 2 segundos
+                    Thread.sleep(1000); // cada 1 segundos
                     estacionamiento.mostrarEstadisticas();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
