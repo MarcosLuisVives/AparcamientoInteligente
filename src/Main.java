@@ -2,29 +2,31 @@ import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
+        long inicio=System.currentTimeMillis();
         Estacionamiento estacionamiento = new Estacionamiento();
         ArrayList<Coche> coches = new ArrayList<>();
 
         // Crear 15 coches, 1 de cada 3 es VIP
-        for (int i = 0; i < 15; i++) {
-            Coche coche = new Coche("Coche " + i, estacionamiento, i % 3 == 0);
-            coche.start();
+        for (int i = 1; i <= 15; i++) {
+            boolean vip = (i % 3 == 0);
+            Coche coche = new Coche("Coche " + i, estacionamiento, vip);
             coches.add(coche);
+            coche.start();
         }
 
-        // Hilo de estadísticas
-        Thread hilo = new Thread(() -> {
+        // Hilo que muestra el estado cada 1 segundo
+        Thread monitor = new Thread(() -> {
             while (estacionamiento.isActivo()) {
                 try {
-                    Thread.sleep(1000); // cada 1 segundos
+                    Thread.sleep(1000);
                     estacionamiento.mostrarEstadisticas();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
             }
-            System.out.println("Hilo de estadísticas finalizado.");
         });
-        hilo.start();
+        monitor.setDaemon(true);
+        monitor.start();
 
         // Esperar a que terminen todos los coches
         for (Coche c : coches) {
@@ -35,14 +37,12 @@ public class Main {
             }
         }
 
-        // Apagar hilo de estadísticas
+        // Finalizar simulación
         estacionamiento.detener();
-        try {
-            hilo.join();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
         estacionamiento.mostrarEstadisticasFinales();
+
+        System.out.println("Todos los coches han intentado aparcar.");
+        long fin=System.currentTimeMillis();
+        System.out.println("Tiempo total: "+(fin-inicio)/1000+" segundos");
     }
 }

@@ -1,14 +1,14 @@
 import java.util.Random;
 
 public class Coche extends Thread {
-    private String nombre;
-    private boolean vip;
-    private Estacionamiento aparcamiento;
+    private final String nombre;
+    private final boolean vip;
+    private final Estacionamiento estacionamiento;
     private final Random random = new Random();
 
-    public Coche(String nombre, Estacionamiento aparcamiento, boolean vip) {
+    public Coche(String nombre, Estacionamiento estacionamiento, boolean vip) {
         this.nombre = nombre;
-        this.aparcamiento = aparcamiento;
+        this.estacionamiento = estacionamiento;
         this.vip = vip;
     }
 
@@ -18,22 +18,24 @@ public class Coche extends Thread {
 
     @Override
     public void run() {
-        if (!aparcamiento.entrar(this)) {
-            System.out.println(nombre + " se marcha, no pudo entrar.");
+        if (!estacionamiento.entrar(this)) {
+            System.out.println(this + " se marcha, no pudo entrar.");
             return;
         }
-        int tiempo = random.nextInt(5) + 2;
-        System.out.println(nombre + " está estacionado (" + tiempo + "s).");
+
+        int tiempo = random.nextInt(5) + 2; // 2 a 6 segundos
+        System.out.println(this + " está estacionado (" + tiempo + "s).");
         try {
             Thread.sleep(tiempo * 1000L);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        aparcamiento.salir(this);
+
+        estacionamiento.salir(this);
     }
 
     @Override
     public String toString() {
-        return vip ? nombre + "[VIP]" : nombre + "[Normal]";
+        return (vip ? "[VIP] " : "[Normal] ") + nombre;
     }
 }
